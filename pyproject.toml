@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ecommerce-data-lake"
+version = "1.0.0"
+description = "End-to-end production-grade E-Commerce Data Lake & ETL Pipeline with PySpark, Parquet, DuckDB, and AWS S3/Glue/Athena"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pyspark>=3.5.0",
+    "pyarrow>=14.0.0",
+    "duckdb>=1.0.0",
+    "boto3>=1.34.0",
+    "pyyaml>=6.0.0",
+    "pandas>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.5.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501", "E712", "E402", "W291", "W293"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-v --strict-markers"
+markers = [
+    "unit: Unit tests",
+    "integration: Local integration tests",
+    "aws: AWS integration tests requiring cloud access",
+]

@@ -1,0 +1,80 @@
+# Active E-Commerce Data Lake Configuration
+environment: local
+
+local:
+  base_dir: ./data
+  raw_dir: ./data/raw
+  bronze_dir: ./data/bronze
+  silver_dir: ./data/silver
+  gold_dir: ./data/gold
+  quarantine_dir: ./data/quarantine
+  audit_dir: ./data/audit
+  state_dir: ./data/state
+
+aws:
+  region: us-east-1
+  s3_bucket: your-ecommerce-datalake-bucket
+  s3_base_prefix: ecommerce
+  s3_prefixes:
+    raw: ecommerce/raw
+    bronze: ecommerce/bronze
+    silver: ecommerce/silver
+    gold: ecommerce/gold
+    quarantine: ecommerce/quarantine
+    audit: ecommerce/audit
+  glue_database: ecommerce_data_lake
+  glue_table_prefix: ecommerce_
+  athena_workgroup: primary
+  athena_output_location: s3://your-ecommerce-datalake-bucket/athena-query-results/
+
+spark:
+  app_name: EcommerceDataLake
+  master: local[*]
+  driver_memory: 2g
+  shuffle_partitions: 4
+  log_level: WARN
+
+generator:
+  seed: 42
+  profiles:
+    dev:
+      customers: 100
+      products: 25
+      orders: 250
+      order_items_multiplier: 2.5
+      returns_rate: 0.10
+      duplicate_rate: 0.05
+      anomaly_rate: 0.03
+    standard:
+      customers: 1000
+      products: 100
+      orders: 3000
+      order_items_multiplier: 3.0
+      returns_rate: 0.12
+      duplicate_rate: 0.04
+      anomaly_rate: 0.02
+    large:
+      customers: 10000
+      products: 500
+      orders: 25000
+      order_items_multiplier: 3.5
+      returns_rate: 0.12
+      duplicate_rate: 0.03
+      anomaly_rate: 0.01
+
+storage:
+  format: parquet
+  compression: snappy
+  partitions:
+    fact_order_items: ["year", "month"]
+    agg_daily_sales: ["year"]
+    dim_customers: []
+    dim_products: []
+    dim_dates: []
+    agg_customer_performance: []
+
+logging:
+  level: INFO
+  console: true
+  file: true
+  log_dir: ./logs
